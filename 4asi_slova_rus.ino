@@ -37,25 +37,25 @@
  
 #define arraySize 8
  
-#define timeButtonPin 3 //to increment the time
+#define timeButtonPin 3 // изменить время
  
-#define colourButtonPin 2 //to adjust the colour
+#define colourButtonPin 2 // настроить цвет
  
-// Which pin on the Arduino is connected to the NeoPixels?
+// на какой пин Arduino подключен NeoPixels?
 #define PIN            4
-// How many NeoPixels are attached to the Arduino?
-#define NUMPIXELS     110// 196
+// Сколь диодов NeoPixels подключено к Arduino?
+#define NUMPIXELS     110//
  
  
-// When we setup the NeoPixel library, we tell it how many pixels, and which pin to use to send signals.
-// Note that for older NeoPixel strips you might need to change the third parameter--see the strandtest
-// example for more information on possible values.
+// Когда мы настраиваем библиотеку NeoPixel, мы сообщаем ей, сколько пикселей и какой вывод использовать для отправки сигналов.
+// Обратите внимание, что для старых полос NeoPixel вам может потребоваться изменить третий параметр - см. strandtest
+// пример для получения дополнительной информации о возможных значениях.
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
-int delayval = 500; // delay for half a second
+int delayval = 500; // пауза полсекукнды
  
-byte zero = 0x00; //workaround for issue #527
+byte zero = 0x00; //исправление проблему #527  (хз чо это... скопипаситл с куском кода, думаю это нужно)
  
-//Pin Setup + Configuration
+//Настройка пинов и конфигрурация
 byte o_itis = 0;     //сейчас Output
 byte o_minutes = 0;  //минут Output
 byte o_oclock = 0;   //часов Output
@@ -100,9 +100,9 @@ char junk = ' ';
 int pixelAddress = 0;
  
  
-#define coloursDefined  6 //Number of colors defined as we use to cycle later
+#define coloursDefined  6 //Количество цветов, определенных для последующего цикла
  
-//list colours here
+//список цветов
 uint32_t colours[] = {pixels.Color(0, 0, 255),
                 pixels.Color(127, 127, 0),
                 pixels.Color(127, 0, 127),
@@ -112,13 +112,13 @@ uint32_t colours[] = {pixels.Color(0, 0, 255),
  
  
  
-int eepromColorAddress = 0; //location to store the color when powered off
+int eepromColorAddress = 0; //место для сохранения цвета при выключении
  
  
-int memoryColour = 0; //the default color
+int memoryColour = 0; //цвет по-умолчанию
  
  
-//Set the colour globally
+//Установка цвет глобально
 uint32_t colourOut;// = colours[memoryColour];
  
  
@@ -134,15 +134,15 @@ void setup() {
   pinMode(timeButtonPin, INPUT);
   pinMode(colourButtonPin, INPUT);
  
-  //Read back color if stored in EEPROM
+  //Читаем цвет из EEPROM
  
   //EEPROM.write(eepromColorAddress,4);
-  memoryColour = readColor(); //the colour currently stored
+  memoryColour = readColor(); //текущий цвет
  
   colourOut = colours[memoryColour];
  
  
-pixels.begin(); // This initializes the NeoPixel library.
+pixels.begin(); // Инициализация библиотеки NeoPixel.
 }
  
  
@@ -186,20 +186,20 @@ void loop() {
  
  
 //----------------------------------------------------------
-//checkHourButton will look to see if button has been pressed on globally set pin
+//checkHourButton проверит, была ли нажата кнопка на пине
 void timeButtonPressed(){
   Serial.println("+++ Hour Button Pressed +++");
-  hourSet =     getHour(); //get existing hour
+  hourSet =     getHour(); //получаем текущий час
  
-  minuteSet =   getMinute()+1;  //0-59, the button increments the minute
+  minuteSet =   getMinute()+1;  //0-59, кнопка увеличивает минуты
  
-  //When you are at 60 mins, increment the hour and reset the minutes
+  //Когда достигает 60, увеличивает час и сбрасывает минуты
   if (minuteSet >= 60) {
     hourSet =     getHour()+1;      //0-23
     minuteSet = minuteSet - 60;
   }
  
-  //When you are past 24 hours, start again
+  //По достижении 24 часов - начинает заново
   if (hourSet >= 24) {
     hourSet = hourSet - 24;
   }
@@ -231,7 +231,7 @@ void colourButtonPressed(){
      
       memoryColour = memoryColour + 1;
  
-  if (memoryColour > (coloursDefined-1)) //ensure not out of bounds
+  if (memoryColour > (coloursDefined-1)) //убедимся, что не выходим за пределы
   {
    
     memoryColour = 0;
@@ -258,27 +258,27 @@ void colourButtonPressed(){
  
 colourOut = colours[memoryColour];
  
-  //store to eeprom
+  //сохранить в eeprom
   updateColor(memoryColour);
  
 }
  
  
 //----------------------------------------------------------
-//getHour pulls the hour integer from DS1307 Real Time Clock
+//getHour извлекает целое число часов из часов реального времени DS1307
 int getHour(){
  
-  // Reset the register pointer
+  // Сброс указателя регистра
   Wire.beginTransmission(DS1307_ADDRESS);
   Wire.write(zero);
   Wire.endTransmission();
  
   Wire.requestFrom(DS1307_ADDRESS, 7);
-  //Need to read the whole packet of information even though Hour is only needed
+  //Нужно прочитать весь пакет информации, хотя час нужен только
   int second = bcdToDec(Wire.read());
   int minute = bcdToDec(Wire.read());
-  int hour = bcdToDec(Wire.read() & 0b111111); //24 hour time
-  int weekDay = bcdToDec(Wire.read()); //0-6 -> Sunday - Saturday
+  int hour = bcdToDec(Wire.read() & 0b111111); //24 -часовой формат
+  int weekDay = bcdToDec(Wire.read()); //0-6 -> Воскресенье - суббота
   int monthDay = bcdToDec(Wire.read());
   int month = bcdToDec(Wire.read());
   int year = bcdToDec(Wire.read());
@@ -288,20 +288,20 @@ int getHour(){
  
  
 //----------------------------------------------------------
-//getMinute pulls the minute integer from DS1307 Real Time Clock
+//getMinute извлекает минутное целое число из часов реального времени DS1307
 int getMinute(){
  
-  // Reset the register pointer
+  // Сброс указателя регистра
   Wire.beginTransmission(DS1307_ADDRESS);
   Wire.write(zero);
   Wire.endTransmission();
  
   Wire.requestFrom(DS1307_ADDRESS, 7);
-  //Need to read the whole packet of information even though Minute is only needed
+  //Нужно прочитать весь пакет информации, хотя минута нужна только
   int second = bcdToDec(Wire.read());
   int minute = bcdToDec(Wire.read());
-  int hour = bcdToDec(Wire.read() & 0b111111); //24 hour time
-  int weekDay = bcdToDec(Wire.read()); //0-6 -> Sunday - Saturday
+  int hour = bcdToDec(Wire.read() & 0b111111); //24 -часовой формат
+  int weekDay = bcdToDec(Wire.read()); //0-6 -> Воскресенье - суббота
   int monthDay = bcdToDec(Wire.read());
   int month = bcdToDec(Wire.read());
   int year = bcdToDec(Wire.read());
@@ -312,14 +312,14 @@ int getMinute(){
  
 //----------------------------------------------------------
 byte decToBcd(byte val){
-// Convert normal decimal numbers to binary coded decimal
+// Преобразование нормальных десятичных чисел в двоично-десятичное
   return ( (val/10*16) + (val%10) );
 }
  
  
 //----------------------------------------------------------
 byte bcdToDec(byte val)  {
-// Convert binary coded decimal to normal decimal numbers
+// Преобразование двоично-десятичного числа в нормальное десятичное число
   return ( (val/16*10) + (val%16) );
 }
  
@@ -329,10 +329,10 @@ byte bcdToDec(byte val)  {
 //  - inputHour between the valueas of 0-23 (24 Hour)
 //  - inputMinutes between the valueas of 0-59
  
-//serialConvert will populate all the bytes used to display words
+//serialConvert заполнит все байты, используемые для отображения слов
 void serialConvert(int inputHour, int inputMinute){
  
-  //Check to see if inputHour and inputMinute are within suitable range
+  //Проверяем, находятся ли inputHour и inputMinute в подходящем диапазоне
   if (inputHour < 0 || inputHour > 23) {
    Serial.print("   inputHour is not suitable: ");
    Serial.println(inputHour);
@@ -350,10 +350,10 @@ void serialConvert(int inputHour, int inputMinute){
  
   clearSerialArray();
  
-  //IT IS is always on
+  //СЕЙЧАС всегда вкл
   o_itis = 1;
  
-  //Minute Serial Conversion
+  //Преобразование минут
   if (inputMinute < 5) {            //??:00 --> ??:04
     o_oclock = 1;
   }
@@ -394,7 +394,7 @@ void serialConvert(int inputHour, int inputMinute){
     }  
   }
  
-  //Hour Serial Conversion
+  //Преобразование часов
   if (inputHour >= 12) {
     inputHour = inputHour - 12;
     if (inputHour == 12) {
@@ -455,10 +455,10 @@ void serialConvert(int inputHour, int inputMinute){
  
  
 //----------------------------------------------------------
-//clearSerialArray will zero all values in outputSerial[]
+//clearSerialArray обнулит все значения в outputSerial []
 void clearSerialArray(){
  
-  //Pin Setup + Configuration
+  //Настройка пинов и конфигрурация
 o_itis = 0;     //сейчас Output
 o_minutes = 0;  //минут Output
 o_oclock = 0;   //часов Output
@@ -489,10 +489,10 @@ h_twelve = 0;   //12 Output
  
  
 void displayTime(){
-  //clearall
+  //очистить
   clearAll();
  
-  //list the time, then in it, list the pixels that are with i
+  //перечислить время, затем в нем, перечислить пиксели
      if (o_itis == 1){     //сейчас Output
    
       pixels.setPixelColor(110, colourOut);
@@ -589,7 +589,7 @@ void displayTime(){
         pixels.setPixelColor(24, colourOut);
     }
  
-  if (m_forty == 1){     //40 Output    
+  if (m_forty == 1){     //40 Output        
         pixels.setPixelColor(42, colourOut);
         pixels.setPixelColor(43, colourOut);
         pixels.setPixelColor(44, colourOut);
@@ -599,7 +599,7 @@ void displayTime(){
         pixels.setPixelColor(25, colourOut);
         pixels.setPixelColor(24, colourOut);
   }
-  if (m_half == 1){     //50 Output       
+  if (m_half == 1){     //50 Output        
         pixels.setPixelColor(33, colourOut);
         pixels.setPixelColor(32, colourOut);
         pixels.setPixelColor(31, colourOut);
@@ -745,8 +745,8 @@ void displayTime(){
  
  
  
-  //show them
-   pixels.show(); // This sends the updated pixel color to the hardware.      
+  //показать
+   pixels.show(); // Это отправляет обновленный цвет пикселя на железо.      
  
  
  
@@ -757,8 +757,8 @@ void displayTime(){
 void clearAll(){
  
   for(int i=0;i<NUMPIXELS;i++){
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels.setPixelColor(i, 0); // Moderately bright green color.
+    // pixels.Color принимает значения RGB, от 0,0,0 до 255,255,255
+    pixels.setPixelColor(i, 0); // Умеренно ярко-зеленый цвет.
    // pixels.show(); // This sends the updated pixel color to the hardware.
     //delay(delayval); // Delay for a period of time (in milliseconds).
   }
@@ -770,9 +770,9 @@ void clearAll(){
 int readColor(){
   int tempColor;
   tempColor = EEPROM.read(eepromColorAddress);
-  //check if valid
-  //if not, default 0
-    if (tempColor > (coloursDefined-1) || tempColor < 0) //ensure not out of bounds
+  //проверяет верно ли
+  //если нет, то default 0
+    if (tempColor > (coloursDefined-1) || tempColor < 0) //не выходить за пределы
   {
    
     tempColor = 0;
