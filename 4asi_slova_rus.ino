@@ -3,7 +3,7 @@
 // таблица символов:
 // с   е  й  ч  а  с  б  д  в  а  о
 // ч   е  т  ы  р  е  д  в  е  о  л
-// о   д  и  н  н  а  д  ц  а  т  о
+// о   д  и  н  н  а  д  ц  а  т  ь
 // т   р  и  д  е  в  о  с  е  м  ь
 // д   е  с  я  т  ь  ф  п  я  т  ь
 // ш   е  с  т  ь  о  ч  а  с  о  в
@@ -53,7 +53,7 @@
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 int delayval = 500; // пауза полсекукнды
  
-byte zero = 0x00; //исправление проблему #527  (хз чо это... скопипаситл с куском кода, думаю это нужно)
+byte zero = 0x00; //исправление проблемы #527  (хз чо это... скопипаситл с куском кода, думаю это нужно)
  
 //Настройка пинов и конфигрурация
 byte o_itis = 0;     //сейчас Output
@@ -83,7 +83,7 @@ byte h_ten = 0;      //10 Output
 byte h_eleven = 0;   //11 Output
 byte h_twelve = 0;   //12 Output
  
- 
+
 int intHour = 0;
 int intMinute = 0;
  
@@ -145,7 +145,6 @@ void setup() {
 pixels.begin(); // Инициализация библиотеки NeoPixel.
 }
  
- 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 void loop() {
  
@@ -162,14 +161,7 @@ void loop() {
  
   displayTime();
  
- 
- 
- 
- 
- 
- 
- 
- 
+  
  
   //temp test
  
@@ -739,16 +731,10 @@ void displayTime(){
         pixels.setPixelColor(78, colourOut);
     }
   }
- 
- 
- 
- 
- 
+  
  
   //показать
    pixels.show(); // Это отправляет обновленный цвет пикселя на железо.      
- 
- 
  
  
 }
@@ -779,8 +765,6 @@ int readColor(){
     Serial.println("Fixed error in memory read");
  
   }
- 
- 
  
  
   return tempColor;
